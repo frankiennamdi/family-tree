@@ -1,0 +1,3 @@
+from support.logging_configurator import LoggingConfigurator
+
+LoggingConfigurator.configure_logging()
