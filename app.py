@@ -23,11 +23,11 @@ def create_app(app_config):
     db_migrator.migrate()
 
     app.register_blueprint(health_check.blueprint, url_prefix='/api')
-    family_graphql_view = FamilyGraphQl.as_view("family-tree", graph_db, schema=schema, batch=True, graphiql=True)
-    app.add_url_rule('/api/family-tree', view_func=family_graphql_view)
+    app.add_url_rule('/api/family-tree',
+                     view_func=FamilyGraphQl.as_view("family-tree", graph_db, schema=schema, batch=True, graphiql=True))
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return jsonify({'message': 'Endpoint Not Found.'}), 404
+        return jsonify({'message': 'Endpoint Resource Not Found.'}), 404
 
     return app
