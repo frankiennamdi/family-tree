@@ -28,13 +28,15 @@ case "$1" in
     install-test)
         yes | $PIPENV_CMD install
         yes | $PIPENV_CMD install --dev
-        $PIPENV_CMD run python -m pytest -s -v -m "not integration"
+        check_neo4j_container
+        $PIPENV_CMD run python -m pytest -s -v
      ;;
      run-local)
         check_neo4j_container
         FLASK_ENV=development $PIPENV_CMD run python manage.py
      ;;
      test)
+       check_neo4j_container
         $PIPENV_CMD run python -m pytest -s -v -m "not integration"
      ;;
      integration-test)
