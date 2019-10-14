@@ -43,7 +43,7 @@ class PersonRepository:
                             f"RETURN partner"
             partners = self._scan_result_set(self._graph.run(partner_query))
             if len(partners) > 0:
-                raise InvalidUpdateOperation("{} or {} are in currently married".format(from_person_email, to_person_email))
+                raise InvalidUpdateOperation("{} or {} are currently married".format(from_person_email, to_person_email))
 
         relationship = Relationship.type(relationship_type.name)
         tx = self._graph.begin()

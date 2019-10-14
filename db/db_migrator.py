@@ -2,6 +2,10 @@ from importlib import import_module
 
 
 class DbMigrator:
+    """
+        Run the db migration listed in the migrations list, future improvement
+        will make this a resource
+    """
     def __init__(self, graph_db):
         self._graph_db = graph_db
 

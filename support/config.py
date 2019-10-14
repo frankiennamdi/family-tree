@@ -1,4 +1,7 @@
 class Config:
+    """
+        Config constants
+    """
     NEO4J_CONFIG = 'neo4j_config'
     NEO4J_HOST = 'neo4j_host'
     NEO4J_PORT = 'neo4j_port'

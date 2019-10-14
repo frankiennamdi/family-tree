@@ -4,7 +4,9 @@ from support.config import Config
 
 
 class Neo4JClientFactory:
-
+    """
+        Factory for create py2neo neo4j client
+    """
     @classmethod
     def new_client(cls, app_config):
         return Graph(
