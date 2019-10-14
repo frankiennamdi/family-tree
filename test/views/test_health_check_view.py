@@ -1,9 +1,5 @@
-import pytest
-
-
 class TestHealthCheckView:
 
-    @pytest.mark.integration
     def test_health_check(self, flask_test_client):
         res = flask_test_client.get('/api/health_check')
         assert res.status_code == 200

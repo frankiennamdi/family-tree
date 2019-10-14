@@ -29,7 +29,7 @@ case "$1" in
         yes | $PIPENV_CMD install
         yes | $PIPENV_CMD install --dev
         check_neo4j_container
-        $PIPENV_CMD run python -m pytest -s -v
+        $PIPENV_CMD run python -m pytest -s -v --cov=. .
      ;;
      run-local)
         check_neo4j_container
@@ -37,12 +37,8 @@ case "$1" in
      ;;
      test)
        check_neo4j_container
-        $PIPENV_CMD run python -m pytest -s -v -m "not integration"
-     ;;
-     integration-test)
-        check_neo4j_container
-        $PIPENV_CMD run python -m pytest -s -v -m "integration" --cov=. .
+        $PIPENV_CMD run python -m pytest -s -v --cov=. .
      ;;
     *)
-    echo $"Usage: $0 {py37setup|clean|install-test|run-local|test|integration-test}"
+    echo $"Usage: $0 {py37setup|clean|install-test|run-local|test}"
 esac

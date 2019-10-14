@@ -8,7 +8,6 @@ from db.repository.person_repository import RelationshipType, InvalidUpdateOpera
 class TestPersonRepository:
     _logger = logging.getLogger(__name__)
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_update_existing_person(self, person_repository):
         updated_person = person_repository.update_or_create(
@@ -16,7 +15,6 @@ class TestPersonRepository:
         self.log_person_list([updated_person])
         assert updated_person.first_name == 'Nicole Jonny'
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_create_person(self, person_repository):
         updated_person = person_repository.update_or_create(
@@ -26,7 +24,6 @@ class TestPersonRepository:
         self.log_person_list([updated_person])
         assert updated_person.first_name == 'Frankie Jonny'
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_check_related(self, person_repository):
         nicole_related_drew = person_repository.check_related('nicole@nicole.com', 'drew@drew.com')
@@ -39,7 +36,6 @@ class TestPersonRepository:
         nicole_related_frankie = person_repository.check_related('nicole@nicole.com', 'frankie@frankie.com')
         assert nicole_related_frankie[0] is False
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_add_parent_relationship(self, person_repository):
         new_person = person_repository.update_or_create(
@@ -53,7 +49,6 @@ class TestPersonRepository:
         nicole_children = person_repository.find_children('nicole@nicole.com')
         assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize(
         "from_email,to_email,expectation",
@@ -65,7 +60,6 @@ class TestPersonRepository:
         with expectation:
             person_repository.add_relation(from_email, to_email, RelationshipType.PARENT)
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize(
         "from_email,expectation",
@@ -82,7 +76,6 @@ class TestPersonRepository:
             assert frankie_person.first_name == 'Frankie Jonny'
             person_repository.add_relation(from_email, 'frankie@frankie.com', RelationshipType.MARRIED)
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_add_married_and_parent_relationship(self, person_repository):
         frankie_person = person_repository.update_or_create(
@@ -104,7 +97,6 @@ class TestPersonRepository:
         nicole_children = person_repository.find_children('nicole@nicole.com')
         assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     def test_create_person_fails_when_data_is_missing(self, person_repository):
         with pytest.raises(ValueError):
@@ -113,7 +105,6 @@ class TestPersonRepository:
                  'phone_number': '322-222-4444', 'birthday': '2019-10-12'}
             )
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,first_name",
                              [('nicole@nicole.com', 'Nicole'),
@@ -124,7 +115,6 @@ class TestPersonRepository:
         assert person.email == email
         assert person.first_name == first_name
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,cousins_count",
                              [('nicole@nicole.com', 3),
@@ -134,7 +124,6 @@ class TestPersonRepository:
         self.log_person_list(cousins)
         assert len(cousins) == cousins_count
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,sibling_count",
                              [('nicole@nicole.com', 3),
@@ -145,7 +134,6 @@ class TestPersonRepository:
         self.log_person_list(siblings)
         assert len(siblings) == sibling_count
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,parent_emails",
                              [('nicole@nicole.com', ['mark@mark.com', 'nancy@nancy.com'])])
@@ -154,7 +142,6 @@ class TestPersonRepository:
         self.log_person_list(parents)
         assert sorted([parent.email for parent in parents]) == sorted(parent_emails)
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,grand_parent_emails",
                              [('nicole@nicole.com', ['tosh@tosh.com', 'prisca@prisca.com'])])
@@ -163,7 +150,6 @@ class TestPersonRepository:
         self.log_person_list(parents)
         assert sorted([parent.email for parent in parents]) == sorted(grand_parent_emails)
 
-    @pytest.mark.integration
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,children_count",
                              [('nicole@nicole.com', 0),

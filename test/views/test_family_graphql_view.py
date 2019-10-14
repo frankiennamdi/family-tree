@@ -1,8 +1,6 @@
 import json
 from urllib.parse import urlencode
 
-import pytest
-
 from db.model.person import Person
 
 
@@ -101,7 +99,6 @@ def create_new_person_daren():
 
 class TestFamilyGraphQlView:
 
-    @pytest.mark.integration
     def test_find_person(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('person', 'nicole@nicole.com'),
                                           content_type='application/json')
@@ -111,7 +108,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['person']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_find_siblings(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('siblings', 'nicole@nicole.com'),
                                           content_type='application/json')
@@ -120,7 +116,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['siblings']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_find_children(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('children', 'jared@jared.com'),
                                           content_type='application/json')
@@ -129,7 +124,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['children']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_find_cousins(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('cousins', 'nicole@nicole.com'),
                                           content_type='application/json')
@@ -138,7 +132,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['cousins']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_find_parents(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('parents', 'nicole@nicole.com'),
                                           content_type='application/json')
@@ -147,7 +140,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['parents']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_find_grandparents(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=query('grandparents', 'nicole@nicole.com'),
                                           content_type='application/json')
@@ -156,7 +148,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['grandparents']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_update_person(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=update_nicole_firstname(),
                                           content_type='application/json')
@@ -165,7 +156,6 @@ class TestFamilyGraphQlView:
         data = response_json(response)['data']['update_person']['updated_person']
         assert_equals([data], Person.sort_list_as_dict(persons))
 
-    @pytest.mark.integration
     def test_create_person(self, flask_test_client, person_repository):
         response = flask_test_client.post(url_string(), data=create_new_person_daren(),
                                           content_type='application/json')
