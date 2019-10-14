@@ -17,6 +17,9 @@ function check_neo4j_container() {
 
 case "$1" in
 
+    py37setup)
+      $PIPENV_CMD run pip install pip==18.0
+      ;;
     clean)
         venv=$(pipenv --venv)
         rm -rf $venv || true
@@ -39,5 +42,5 @@ case "$1" in
         $PIPENV_CMD run python -m pytest -s -v -m "integration" --cov=. .
      ;;
     *)
-    echo $"Usage: $0 {clean|install-test|run-local|test|integration-test}"
+    echo $"Usage: $0 {py37setup|clean|install-test|run-local|test|integration-test}"
 esac
