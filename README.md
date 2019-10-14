@@ -115,7 +115,7 @@ person's relationship and their family tree.
     - Siblings: Persons with the same parent including children of a parent's partner by marriage.
     - Parents: Parent or partner of parent.
     - Children: Direct children or children of partner by marriage.
-    - Grandparents: Parent or their spouse that are parents my parent.
+    - Grandparents: Parent or their spouse that are parents of my parent.
     - Cousins: Children of my parents (parent and their spouse) siblings.
     
     Because we do not currently support deletion, once you are connected to a particular family

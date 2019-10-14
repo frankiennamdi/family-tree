@@ -36,7 +36,7 @@ def run_migration(request, graph_db):
     db_migrator.clean_db()
     if 'run_migration' in request.keywords:
         db_migrator.migrate()
-    # yield
+
 
 
 @pytest.fixture(autouse=True)

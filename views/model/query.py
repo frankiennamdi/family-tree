@@ -42,4 +42,4 @@ class Query(graphene.ObjectType):
 
 def list_to_schema(persons):
     person_dicts_sorted = Person.sort_list_as_dict(persons)
-    return [PersonSchema(**sibling_dict) for sibling_dict in person_dicts_sorted]
+    return [PersonSchema(**person_dict) for person_dict in person_dicts_sorted]
