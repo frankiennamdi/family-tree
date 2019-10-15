@@ -1,0 +1,137 @@
+mutation create_daren {
+  create_person(person_input: {email: "daren@daren.com", first_name: "Darent", last_name: "TheDarent", phone_number: "322-222-4444", address: "daren's home", birthday: "2019-10-12"}) {
+    updated_person {
+      email
+      first_name
+      last_name
+      phone_number
+      address
+      birthday
+    }
+    success
+  }
+}
+
+mutation update_nicole {
+  update_person(person_input: {email: "nicole@nicole.com", first_name: "Nicole2"}) {
+    updated_person {
+      email
+      first_name
+      last_name
+      phone_number
+      address
+      birthday
+    }
+    success
+  }
+}
+
+mutation create_drake {
+  create_person(person_input: {email: "drake@drake.com", first_name: "Drake", last_name: "TheDarent", phone_number: "322-222-4444", address: "daren's home", birthday: "2019-10-12"}) {
+    updated_person {
+      email
+      first_name
+      last_name
+      phone_number
+      address
+      birthday
+    }
+    success
+  }
+}
+
+mutation daren_marries_nicole {
+  add_relationship(from_email: "daren@daren.com", to_email: "nicole@nicole.com", relationship_type: MARRIED) {
+    success
+  }
+}
+
+
+mutation nicole_marries_daren {
+  add_relationship(from_email: "nicole@nicole.com", to_email: "daren@daren.com", relationship_type: MARRIED) {
+    success
+  }
+}
+
+mutation daren_parent_drake {
+  add_relationship(from_email: "daren@daren.com", to_email: "drake@drake.com", relationship_type: PARENT) {
+    success
+  }
+}
+
+query nicole_children {
+  children(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query nicole_cousins {
+  cousins(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query drew_cousins {
+  cousins(email: "drew@drew.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query nicole_parent {
+  parents(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query nicole_grandparents {
+  grandparents(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query nicole_siblings {
+  siblings(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
+query daren_children {
+  children(email: "daren@daren.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
