@@ -127,7 +127,8 @@ person's relationship and their family tree.
 
 The application use  **GRAPHIQL** interface that makes it easy to execute graphql
 queries and mutations. The interface also allows you to store command by name. More 
-examples are present in the file **sample_executions.txt**. 
+examples are present in the file **sample_executions.txt**. The file contains both valid and invalid
+queries to test the rules of our system. 
 
     ```
     mutation create_daren {

@@ -25,39 +25,70 @@ class PersonRepository:
     def __init__(self, graph):
         self._graph = graph
 
-    def relative(self, email):
-        return self.find_grandparents(email) + self.find_children(email) + \
-               self.find_parents(email) + self.find_cousins(email) + \
-               self.find_siblings(email)
+    def _relative(self, email):
+        """
+        find the relatives of the person with this email
+        :param email:
+        :return: list of persons that are relatives
+        """
+        return self.find_grandparents(email) + self.find_children(email) + self.find_parents(email) + self.find_cousins(
+            email) + self.find_siblings(email)
 
-    def add_relation(self, from_person_email, to_person_email, relationship_type):
-        print(relationship_type.name)
-        exiting_relationship = self.check_related(from_person_email, to_person_email)
-        has_current_relationship = exiting_relationship[0]
-        if has_current_relationship:
-            raise InvalidUpdateOperation("{} and {} are in the same family tree".format(from_person_email, to_person_email))
+    def find_relative(self, email):
+        """
+        find relative of the person with this email of their spouse if they have one
+        :param email:
+        :return: the list of persons that are relatives
+        """
+        partner_query = f"MATCH (person:Person {{email:'{email}'}})-[:MARRIED]-(partner) " \
+                        f"RETURN partner"
+        relatives = self._relative(email)
+        partner_email = self._scan_result_set(self._graph.run(partner_query))
+        # relatives of your partner are also your relatives
+        if len(partner_email) > 0:
+            return relatives + self._relative(partner_email[0].email)
+        return relatives
 
-        if relationship_type == RelationshipType.MARRIED:
-            partner_query = f"MATCH (person:Person {{email:'{from_person_email}'}})-[:MARRIED]-(partner) " \
-                            f"RETURN partner UNION MATCH (person:Person {{email:'{to_person_email}'}})-[:MARRIED]-(partner) " \
-                            f"RETURN partner"
-            partners = self._scan_result_set(self._graph.run(partner_query))
-            if len(partners) > 0:
-                raise InvalidUpdateOperation("{} or {} are currently married".format(from_person_email, to_person_email))
-
+    def _merge_relationship(self, relationship_type, from_person, to_person):
         relationship = Relationship.type(relationship_type.name)
         tx = self._graph.begin()
-        from_node = Node("Person", **exiting_relationship[1].as_dict())
-        to_node = Node("Person", **exiting_relationship[2].as_dict())
+        from_node = Node("Person", **from_person.as_dict())
+        to_node = Node("Person", **to_person.as_dict())
         new_relationship = relationship(from_node, to_node)
         tx.merge(new_relationship, Person.__primarylabel__, Person.__primarykey__)
         tx.push(new_relationship)
         tx.commit()
+
+    def add_relation(self, from_person_email, to_person_email, relationship_type):
+        if relationship_type == RelationshipType.MARRIED:
+            partner_query = f"MATCH (person:Person {{email:'{from_person_email}'}})-[:MARRIED]-(partner) " \
+                            f"RETURN partner " \
+                            f"UNION MATCH (person:Person {{email:'{to_person_email}'}})-[:MARRIED]-(partner) " \
+                            f"RETURN partner"
+            partner_emails = [person.email for person in self._scan_result_set(self._graph.run(partner_query))]
+            if len(partner_emails) > 0:
+                if sorted([from_person_email, to_person_email]) == sorted(partner_emails):
+                    self._merge_relationship(relationship_type, self.find(from_person_email),
+                                             self.find(to_person_email))
+                    return True
+                else:
+                    raise InvalidUpdateOperation(
+                        "{} or {} are currently married".format(from_person_email, to_person_email))
+
+        exiting_relationship = self.check_related(from_person_email, to_person_email)
+        has_current_relationship = exiting_relationship[0]
+        current_relatives_emails = exiting_relationship[3]
+
+        if has_current_relationship and not (
+                relationship_type == RelationshipType.PARENT and from_person_email in current_relatives_emails):
+            raise InvalidUpdateOperation(
+                "{} and {} are in the same family tree".format(from_person_email, to_person_email))
+        self._merge_relationship(relationship_type, exiting_relationship[1], exiting_relationship[2])
         return True
 
     def check_related(self, from_person_email, to_person_email):
         """
-        check if two person have any relatives in common
+        check if two persons have any relatives in common
         """
         from_person = self.find(from_person_email)
         to_person = self.find(to_person_email)
@@ -67,10 +98,10 @@ class PersonRepository:
         if not to_person:
             raise ValueError("person with {} email does not exist.".format(to_person_email))
 
-        from_person_relatives_emails = [person.email for person in self.relative(from_person_email)]
-        to_person_relatives_emails = [person.email for person in self.relative(to_person_email)]
-        is_related = len(set(from_person_relatives_emails).intersection(set(to_person_relatives_emails))) > 0
-        return is_related, from_person, to_person
+        from_person_relatives_emails = [person.email for person in self.find_relative(from_person_email)]
+        to_person_relatives_emails = [person.email for person in self.find_relative(to_person_email)]
+        related_emails = set(from_person_relatives_emails).intersection(set(to_person_relatives_emails))
+        return len(related_emails) > 0, from_person, to_person, related_emails
 
     def update_or_create(self, person_input_dict):
         email_validation_result = PersonInputValidator.validate_email(**person_input_dict)

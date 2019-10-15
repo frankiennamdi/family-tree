@@ -43,8 +43,7 @@ class TestPersonRepository:
              'phone_number': '322-222-4444', 'address': 'Marks Home', 'birthday': '2019-10-12'}
         )
         assert new_person.first_name == 'Frankie Jonny'
-        result = person_repository.add_relation('nicole@nicole.com', 'frankie@frankie.com',
-                                                RelationshipType.PARENT)
+        result = person_repository.add_relation('nicole@nicole.com', 'frankie@frankie.com', RelationshipType.PARENT)
         assert result is True
         nicole_children = person_repository.find_children('nicole@nicole.com')
         assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
@@ -88,14 +87,19 @@ class TestPersonRepository:
              'phone_number': '322-222-4444', 'address': 'keith Home', 'birthday': '2019-10-12'}
         )
         assert keith_person.first_name == 'keith Jonny'
-        result = person_repository.add_relation('keith@keith.com', 'frankie@frankie.com',
-                                                RelationshipType.PARENT)
+        result = person_repository.add_relation('keith@keith.com', 'frankie@frankie.com', RelationshipType.PARENT)
         assert result is True
-        result = person_repository.add_relation('nicole@nicole.com', 'keith@keith.com',
-                                                RelationshipType.MARRIED)
+        result = person_repository.add_relation('nicole@nicole.com', 'keith@keith.com', RelationshipType.MARRIED)
         assert result is True
         nicole_children = person_repository.find_children('nicole@nicole.com')
         assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
+        # add nicole as parent to frankie, so she is directly connected
+        result = person_repository.add_relation('nicole@nicole.com', 'frankie@frankie.com', RelationshipType.PARENT)
+        assert result is True
+        nicole_children = person_repository.find_children('nicole@nicole.com')
+        assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
+        with pytest.raises(InvalidUpdateOperation):
+            person_repository.add_relation('frankie@frankie.com', 'nicole@nicole.com', RelationshipType.PARENT)
 
     @pytest.mark.run_migration
     def test_create_person_fails_when_data_is_missing(self, person_repository):
