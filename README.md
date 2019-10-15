@@ -11,7 +11,9 @@ product. It currently does not support deletes.
 
 * PyCharm - or your favorite IDE.
 * Docker/Docker Compose - for running Neo4J container.
-* Neo4J - included in docker-compose.yml file, a graph database.
+* Neo4J - included in docker-compose.yml file, a graph database. We are using the free version which
+means that we do not have a full feature set and have to rely on the application for some relationship 
+constraints. Which is not the most ideal layer for such constraints. 
 * Python 3.7
 * Pipenv - virtual environment and dependency manager.
 * Bash - scripts and command execution.
@@ -104,12 +106,13 @@ person's relationship and their family tree.
     relationship in the family is derived from these two relationships.
     
     - PARENT: 
-    Any Person that has a parent relationship to another node. A parent can also be a person who is
+    Any Person that has a parent relationship to another node. This is the primary relationship and it forms the
+    basis for a lot of the queries we answer with the model. A parent can also be a person who is
     married to a parent. We chose this approach to account for step relationship based on marriage. 
     
     - MARRIED 
-    Establishes a partnership between two persons. When two persons are married their children are counted
-    and affects all other derived relationships. We accounted for step relationships.
+    Establishes a partnership between two persons. This is relationship put in place to give us more connectivity. 
+    When two persons are married their children are counted and affects all other derived relationships. We accounted for step relationships.
     
     The following are some of the derived relationships:
     - Siblings: Persons with the same parent including children of a parent's partner by marriage.
@@ -120,7 +123,8 @@ person's relationship and their family tree.
     
     Because we do not currently support deletion, once you are connected to a particular family
     tree you cannot have another relationship to the same tree. For the same reason you cannot
-    marry someone who is currently married. This also help to avoid some circular path in the graph.
+    marry someone who is currently married. This also help to avoid some circular path in the graph and to simplify
+    this demo. 
     
     
 ## User Interface
@@ -194,12 +198,14 @@ Sample Error:
 
 ```
  
- ## Improvements
+ ## Future Improvements
  
- * More testing for edge cases and bad data states. 
+ * More testing for edge cases and bad data states. With graphs there are bound to
+ be edges that are not allowed. 
  * Review relationship definition and ensure that the integrity of the model is 
  preserved.
- * Add delete capability to allow for relationship corrections. 
+ * Add delete capability to allow for relationship corrections especially when valid relationships
+ are rejected. 
   
  
 
