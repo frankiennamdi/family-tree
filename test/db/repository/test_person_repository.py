@@ -28,25 +28,19 @@ class TestPersonRepository:
     def test_check_related(self, person_repository):
         nicole_related_drew = person_repository.check_related('nicole@nicole.com', 'drew@drew.com')
         assert nicole_related_drew[0] is True
-        new_person = person_repository.update_or_create(
-            {'email': 'frankie@frankie.com', 'first_name': 'Frankie Jonny', 'last_name': 'Marks',
-             'phone_number': '322-222-4444', 'address': 'Marks Home', 'birthday': '2019-10-12'}
-        )
-        assert new_person.first_name == 'Frankie Jonny'
-        nicole_related_frankie = person_repository.check_related('nicole@nicole.com', 'frankie@frankie.com')
+        new_email = 'frankie@frankie.com'
+        self.new_person(new_email, person_repository)
+        nicole_related_frankie = person_repository.check_related('nicole@nicole.com', new_email)
         assert nicole_related_frankie[0] is False
 
     @pytest.mark.run_migration
     def test_add_parent_relationship(self, person_repository):
-        new_person = person_repository.update_or_create(
-            {'email': 'frankie@frankie.com', 'first_name': 'Frankie Jonny', 'last_name': 'Marks',
-             'phone_number': '322-222-4444', 'address': 'Marks Home', 'birthday': '2019-10-12'}
-        )
-        assert new_person.first_name == 'Frankie Jonny'
-        result = person_repository.add_relation('nicole@nicole.com', 'frankie@frankie.com', RelationshipType.PARENT)
-        assert result is True
-        nicole_children = person_repository.find_children('nicole@nicole.com')
-        assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
+        new_email = 'frankie@frankie.com'
+        parent_email = 'nicole@nicole.com'
+        self.new_person(new_email, person_repository)
+        assert person_repository.add_relation(parent_email, new_email, RelationshipType.PARENT)
+        nicole_children = person_repository.find_children(parent_email)
+        assert sorted([children.email for children in nicole_children]) == sorted([new_email])
 
     @pytest.mark.run_migration
     @pytest.mark.parametrize(
@@ -56,57 +50,64 @@ class TestPersonRepository:
         ]
     )
     def test_add_bad_parent_relationship(self, person_repository, from_email, to_email, expectation):
-        with expectation:
+        with expectation as info:
             person_repository.add_relation(from_email, to_email, RelationshipType.PARENT)
+            assert 'in the same family tree' in str(info.value)
 
     @pytest.mark.run_migration
     @pytest.mark.parametrize(
-        "from_email,expectation",
+        "from_email,new_email,expectation",
         [
-            ('nancy@nancy.com', pytest.raises(InvalidUpdateOperation)),
+            ('nancy@nancy.com', 'frankie@frankie.com', pytest.raises(InvalidUpdateOperation)),
         ]
     )
-    def test_add_bad_married_relationship(self, person_repository, from_email, expectation):
-        with expectation:
-            frankie_person = person_repository.update_or_create(
-                {'email': 'frankie@frankie.com', 'first_name': 'Frankie Jonny', 'last_name': 'keith',
-                 'phone_number': '322-222-4444', 'address': 'Marks Home', 'birthday': '2019-10-12'}
-            )
-            assert frankie_person.first_name == 'Frankie Jonny'
-            person_repository.add_relation(from_email, 'frankie@frankie.com', RelationshipType.MARRIED)
+    def test_add_bad_married_relationship(self, person_repository, from_email, new_email, expectation):
+        with expectation as info:
+            self.new_person(new_email, person_repository)
+            assert person_repository.add_relation(from_email, new_email, RelationshipType.MARRIED)
+            assert "are currently married" in str(info.value)
+
+    @pytest.mark.run_migration
+    def test_partners_can_marry_each_other(self, person_repository):
+        keith_email = 'keith@keith.com'
+        nicole_email = 'nicole@nicole.com'
+        self.new_person(keith_email, person_repository)
+        assert person_repository.add_relation(keith_email, nicole_email, RelationshipType.MARRIED)
+        assert person_repository.add_relation(nicole_email, keith_email, RelationshipType.MARRIED)
 
     @pytest.mark.run_migration
     def test_add_married_and_parent_relationship(self, person_repository):
-        frankie_person = person_repository.update_or_create(
-            {'email': 'frankie@frankie.com', 'first_name': 'Frankie Jonny', 'last_name': 'keith',
-             'phone_number': '322-222-4444', 'address': 'Marks Home', 'birthday': '2019-10-12'}
-        )
-        assert frankie_person.first_name == 'Frankie Jonny'
-        keith_person = person_repository.update_or_create(
-            {'email': 'keith@keith.com', 'first_name': 'keith Jonny', 'last_name': 'keith',
-             'phone_number': '322-222-4444', 'address': 'keith Home', 'birthday': '2019-10-12'}
-        )
-        assert keith_person.first_name == 'keith Jonny'
-        result = person_repository.add_relation('keith@keith.com', 'frankie@frankie.com', RelationshipType.PARENT)
-        assert result is True
-        result = person_repository.add_relation('nicole@nicole.com', 'keith@keith.com', RelationshipType.MARRIED)
-        assert result is True
+        frankie_email = 'frankie@frankie.com'
+        keith_email = 'keith@keith.com'
+        nicole_email = 'nicole@nicole.com'
+        self.new_person(frankie_email, person_repository)
+        self.new_person(keith_email, person_repository)
+
+        assert person_repository.add_relation(keith_email, frankie_email, RelationshipType.PARENT)
+        assert person_repository.add_relation(nicole_email, keith_email, RelationshipType.MARRIED)
+
         nicole_children = person_repository.find_children('nicole@nicole.com')
-        assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
+        assert sorted([children.email for children in nicole_children]) == sorted([frankie_email])
+
         # add nicole as parent to frankie, so she is directly connected
-        result = person_repository.add_relation('nicole@nicole.com', 'frankie@frankie.com', RelationshipType.PARENT)
-        assert result is True
-        nicole_children = person_repository.find_children('nicole@nicole.com')
-        assert sorted([children.email for children in nicole_children]) == sorted(['frankie@frankie.com'])
+        assert person_repository.add_relation(nicole_email, frankie_email, RelationshipType.PARENT)
+        nicole_children = person_repository.find_children(nicole_email)
+        assert sorted([children.email for children in nicole_children]) == sorted([frankie_email])
+
+        # check frankie cannot parent nicole
         with pytest.raises(InvalidUpdateOperation):
-            person_repository.add_relation('frankie@frankie.com', 'nicole@nicole.com', RelationshipType.PARENT)
+            person_repository.add_relation(frankie_email, nicole_email, RelationshipType.PARENT)
 
     @pytest.mark.run_migration
     def test_create_person_fails_when_data_is_missing(self, person_repository):
         with pytest.raises(ValueError):
             person_repository.update_or_create(
-                {'email': 'frankie@frankie.com', 'first_name': 'Frankie Jonny', 'last_name': 'Marks',
-                 'phone_number': '322-222-4444', 'birthday': '2019-10-12'}
+                {'email': 'frankie@frankie.com',
+                 'first_name': 'Frankie Jonny',
+                 'last_name': 'Marks',
+                 'phone_number': '322-222-4444',
+                 'birthday': '2019-10-12'
+                 }
             )
 
     @pytest.mark.run_migration
@@ -168,3 +169,14 @@ class TestPersonRepository:
     def log_person_list(self, persons):
         for person in persons:
             self._logger.info(person.as_dict())
+
+    def new_person(self, email, person_repository):
+        person_repository.update_or_create(
+            {'email': email,
+             'first_name': email,
+             'last_name': email,
+             'phone_number': '322-222-4444',
+             'address': email,
+             'birthday': '2019-10-12'
+             }
+        )
