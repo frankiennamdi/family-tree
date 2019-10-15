@@ -16,16 +16,16 @@ def new_person(first_name, email, last_name, phone_number, address, birthday):
 def migrate(tx):
     tx.graph.schema.create_uniqueness_constraint('Person', 'email')
 
-    # Tosh and Prisca - Grand Parent
+    # Tosh and Prisca - Grandparents
     tosh = new_person('Tosh', 'tosh@tosh.com', 'Toshes', '222-222-4444', 'Toshes Home', '2019-10-12')
     prisca = new_person('Prisca', 'prisca@prisca.com', 'Toshes', '222-222-4444', 'Toshes Home', '2019-10-12')
     tx.create(tosh | prisca)
 
-    # Joan's grand dad
+    # Joan's Granddad
     daniel = new_person('Daniel', 'daniel@daniel.com', 'Daniels', '122-222-4444', 'Daniels Home', '2019-10-12')
     tx.create(daniel)
 
-    # mark and nancy family
+    # Mark and Nancy family
     mark = new_person('Mark', 'mark@mark.com', 'Marks', '322-222-4444', 'Marks Home', '2019-10-12')
     nancy = new_person('Nance', 'nancy@nancy.com', 'Marks', '322-222-4444', 'Marks Home', '2019-10-12')
     nicole = new_person('Nicole', 'nicole@nicole.com', 'Marks', '322-222-4444', 'Marks Home', '2019-10-12')
@@ -35,14 +35,14 @@ def migrate(tx):
     jakie = new_person('Jakie', 'jakie@jakie.com', 'Nancy', '422-222-4444', 'Marks Home', '2019-10-12')
     tx.create(mark | nancy | nicole | drew | mary | jakie)
 
-    # jared and joan family
+    # Jared and Joan Family
     jared = new_person('Jared', 'jared@jared.com', 'JaredHold', '522-222-4444', 'JaredHold Home', '2019-10-12')
     joan = new_person('Joan', 'joan@joan.com', 'JaredHold', '522-222-4444', 'JaredHold Home', '2019-10-12')
     gil = new_person('Gil', 'gil@gil.com', 'JaredHold', '522-222-4444', 'JaredHold Home', '2019-10-12')
     marcus = new_person('Marcus', 'marcus@marcus.com', 'JaredHold', '522-222-4444', 'JaredHold Home', '2019-10-12')
     tx.create(jared | joan | gil | marcus)
 
-    # joan's sister family
+    # Joan's sister family
     mercy = new_person('Mercy', 'mercy@mercy.com', 'Mercies', '422-222-4444', 'Mercies Home', '2019-10-12')
     jack = new_person('Jack', 'jack@jack.com', 'Mercies', '422-222-4444', 'Mercies Home', '2019-10-12')
     tx.create(mercy | jack)
@@ -60,9 +60,9 @@ def migrate(tx):
     tx.create(PARENT(daniel, joan))
     tx.create(PARENT(daniel, mercy))
 
-    # mark and nancy married
+    # Mark and Nancy married
     tx.create(MARRIED(mark, nancy))
-    # mark and nancy children
+    # Mark and Nancy children
     tx.create(PARENT(mark, nicole))
     tx.create(PARENT(mark, drew))
     tx.create(PARENT(mark, mary))
@@ -71,15 +71,15 @@ def migrate(tx):
     tx.create(PARENT(nancy, mary))
     tx.create(PARENT(nancy, jakie))
 
-    # mark and nancy married
+    # Jared and Joan married
     tx.create(MARRIED(jared, joan))
 
-    # jared and joan children
+    # Jared and Joan children
     tx.create(PARENT(jared, gil))
     tx.create(PARENT(jared, marcus))
     tx.create(PARENT(joan, gil))
     # marcus not listed as child of joan, to see if we can get him as a step child from marriage
     # tx.create(PARENT(joan, marcus))
 
-    # mercy's family
+    # Mercy's family
     tx.create(PARENT(mercy, jack))

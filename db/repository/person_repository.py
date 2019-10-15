@@ -18,7 +18,7 @@ class InvalidUpdateOperation(Exception):
 
 class PersonRepository:
     """
-     data access for person
+     data access for person and their relationship
     """
     _logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class PersonRepository:
 
     def find_relative(self, email):
         """
-        find relative of the person with this email of their spouse if they have one
+        find relative of the person with this email or their spouse if they have one
         :param email:
         :return: the list of persons that are relatives
         """
@@ -52,8 +52,8 @@ class PersonRepository:
     def _merge_relationship(self, relationship_type, from_person, to_person):
         relationship = Relationship.type(relationship_type.name)
         tx = self._graph.begin()
-        from_node = Node("Person", **from_person.as_dict())
-        to_node = Node("Person", **to_person.as_dict())
+        from_node = Node(Person.__primarylabel__, **from_person.as_dict())
+        to_node = Node(Person.__primarylabel__, **to_person.as_dict())
         new_relationship = relationship(from_node, to_node)
         tx.merge(new_relationship, Person.__primarylabel__, Person.__primarykey__)
         tx.push(new_relationship)
@@ -129,7 +129,7 @@ class PersonRepository:
         for key, value in person_input_dict.items():
             property_dict[key] = value
         tx = self._graph.begin()
-        node = Node("Person", **property_dict)
+        node = Node(Person.__primarylabel__, **property_dict)
         tx.merge(node, Person.__primarylabel__, Person.__primarykey__)
         tx.push(node)
         tx.commit()
@@ -157,7 +157,7 @@ class PersonRepository:
 
     def find_cousins(self, email):
         cousins_query = f"MATCH (person:Person{{email:'{email}'}})<-[:PARENT*2]-(grandparent)-[:PARENT]->" \
-                        f"(sibling)-[:MARRIED]->(partner)<-[:PARENT]-(partner_parents)-[:PARENT]->(partner_sibling)-" \
+                        f"(sibling)-[:MARRIED]-(partner)<-[:PARENT]-(partner_parents)-[:PARENT]->(partner_sibling)-" \
                         f"[:PARENT]->(cousins) RETURN cousins UNION MATCH (person:Person{{email:'{email}'}})" \
                         f"<-[:PARENT*2]-(grandparent), (grandparent)-[:PARENT]->(sibling)-[:PARENT]->(cousins) RETURN cousins"
         return self._scan_result_set(self._graph.run(cousins_query))

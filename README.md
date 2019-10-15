@@ -130,7 +130,8 @@ queries and mutations. The interface also allows you to store command by name. M
 examples are present in the file **sample_executions.txt**. The file contains both valid and invalid
 queries to test the rules of our system. 
 
-    ```
+Sample Mutation(create):
+ ```
     mutation create_daren {
       create_person(person_input: {
         email: "daren@daren.com"
@@ -153,7 +154,45 @@ queries to test the rules of our system.
         success
       }
     }
-    ```
+ ```
+
+Sample Query:
+```
+query nicole_cousins {
+  cousins(email: "nicole@nicole.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+```
+
+Sample Error:
+ ```json
+{
+  "errors": [
+    {
+      "message": "drew@drew.com and marcus@marcus.com are in the same family tree",
+      "locations": [
+        {
+          "line": 74,
+          "column": 3
+        }
+      ],
+      "path": [
+        "add_relationship"
+      ]
+    }
+  ],
+  "data": {
+    "add_relationship": null
+  }
+}
+
+```
  
  ## Improvements
  
