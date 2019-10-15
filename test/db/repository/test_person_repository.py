@@ -76,6 +76,17 @@ class TestPersonRepository:
         assert person_repository.add_relation(nicole_email, keith_email, RelationshipType.MARRIED)
 
     @pytest.mark.run_migration
+    def test_partners_can_have_new_relationship_with_partners_tree(self, person_repository):
+        keith_email = 'keith@keith.com'
+        nicole_email = 'nicole@nicole.com'
+        tosh_email = 'tosh@tosh.com'  # nicole's grandfather
+        self.new_person(keith_email, person_repository)
+        assert person_repository.add_relation(keith_email, nicole_email, RelationshipType.MARRIED)
+        with pytest.raises(InvalidUpdateOperation) as info:
+            person_repository.add_relation(keith_email, tosh_email, RelationshipType.PARENT)
+            assert 'in the same family tree' in str(info.value)
+
+    @pytest.mark.run_migration
     def test_add_married_and_parent_relationship(self, person_repository):
         frankie_email = 'frankie@frankie.com'
         keith_email = 'keith@keith.com'
@@ -95,8 +106,9 @@ class TestPersonRepository:
         assert sorted([children.email for children in nicole_children]) == sorted([frankie_email])
 
         # check frankie cannot parent nicole
-        with pytest.raises(InvalidUpdateOperation):
+        with pytest.raises(InvalidUpdateOperation) as info:
             person_repository.add_relation(frankie_email, nicole_email, RelationshipType.PARENT)
+            assert 'in the same family tree' in str(info.value)
 
     @pytest.mark.run_migration
     def test_create_person_fails_when_data_is_missing(self, person_repository):
