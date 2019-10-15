@@ -1,14 +1,5 @@
 mutation create_daren {
-  create_person(person_input: {
-    email: "daren@daren.com"
-    first_name: "Darent"
-  	last_name: "TheDarent"
-    phone_number:"322-222-4444"
-    address: "daren's home"
-    birthday: "2019-10-12"
-
-  })
-  {
+  create_person(person_input: {email: "daren@daren.com", first_name: "Darent", last_name: "TheDarent", phone_number: "322-222-4444", address: "daren's home", birthday: "2019-10-12"}) {
     updated_person {
       email
       first_name
@@ -22,12 +13,7 @@ mutation create_daren {
 }
 
 mutation update_nicole {
-  update_person(person_input: {
-    email: "nicole@nicole.com"
-    first_name: "Nicole2"
-
-  })
-  {
+  update_person(person_input: {email: "nicole@nicole.com", first_name: "Nicole2"}) {
     updated_person {
       email
       first_name
@@ -41,16 +27,7 @@ mutation update_nicole {
 }
 
 mutation create_drake {
-  create_person(person_input: {
-    email: "drake@drake.com"
-    first_name: "Drake"
-  	last_name: "TheDarent"
-    phone_number:"322-222-4444"
-    address: "daren's home"
-    birthday: "2019-10-12"
-
-  })
-  {
+  create_person(person_input: {email: "drake@drake.com", first_name: "Drake", last_name: "TheDarent", phone_number: "322-222-4444", address: "daren's home", birthday: "2019-10-12"}) {
     updated_person {
       email
       first_name
@@ -63,89 +40,64 @@ mutation create_drake {
   }
 }
 
+mutation daren_marries_mercy {
+  add_relationship(from_email: "daren@daren.com", to_email: "mercy@mercy.com", relationship_type: MARRIED) {
+    success
+  }
+}
 
 mutation daren_marries_nicole {
-  add_relationship(from_email: "daren@daren.com"
-  to_email: "nicole@nicole.com", relationship_type: MARRIED){
+  add_relationship(from_email: "daren@daren.com", to_email: "nicole@nicole.com", relationship_type: MARRIED) {
     success
   }
 }
 
 mutation nicole_marries_drew {
-  add_relationship(from_email: "drew@drew.com"
-  to_email: "nicole@nicole.com", relationship_type: MARRIED){
+  add_relationship(from_email: "drew@drew.com", to_email: "nicole@nicole.com", relationship_type: MARRIED) {
+    success
+  }
+}
+
+mutation nicole_marries_daren {
+  add_relationship(from_email: "nicole@nicole.com", to_email: "daren@daren.com", relationship_type: MARRIED) {
     success
   }
 }
 
 mutation daren_parent_drake {
-  add_relationship(from_email: "daren@daren.com"
-  to_email: "drake@drake.com", relationship_type: PARENT){
+  add_relationship(from_email: "daren@daren.com", to_email: "drake@drake.com", relationship_type: PARENT) {
     success
   }
 }
 
-mutation drew_parent_drake {
-  add_relationship(from_email: "drew@drew.com"
-  to_email: "drake@drake.com", relationship_type: PARENT){
+mutation marcus_parent_drew {
+  add_relationship(from_email: "drew@drew.com", to_email: "marcus@marcus.com", relationship_type: PARENT) {
+    success
+  }
+}
+
+mutation daren_parent_tosh {
+  add_relationship(from_email: "daren@daren.com", to_email: "tosh@tosh.com", relationship_type: PARENT) {
+    success
+  }
+}
+
+mutation nicole_parent_drake {
+  add_relationship(from_email: "nicole@nicole.com", to_email: "drake@drake.com", relationship_type: PARENT) {
     success
   }
 }
 
 query nicole_children {
-  children (email: "nicole@nicole.com") {
+  children(email: "nicole@nicole.com") {
     email
-  	first_name
+    first_name
     last_name
     phone_number
     address
     birthday
   }
 }
-
-query daren_children {
-  children (email: "daren@daren.com") {
-    email
-  	first_name
-    last_name
-    phone_number
-    address
-    birthday
-  }
-}
-
-
-mutation create_jake {
-  create_person(person_input: {
-    email: "jake@jake.com"
-    first_name: "jake"
-  	last_name: "Thejake"
-    phone_number:"322-222-4444"
-    address: "daren's home"
-    birthday: "2019-10-12"
-
-  })
-  {
-    updated_person {
-      email
-      first_name
-      last_name
-      phone_number
-      address
-      birthday
-    }
-    success
-  }
-}
-
-
-mutation jake_marries_nicole {
-  add_relationship(from_email: "jake@jake.com"
-  to_email: "nicole@nicole.com", relationship_type: MARRIED){
-    success
-  }
-}
-
 
 query nicole_cousins {
   cousins(email: "nicole@nicole.com") {
@@ -158,10 +110,21 @@ query nicole_cousins {
   }
 }
 
+query drew_cousins {
+  cousins(email: "drew@drew.com") {
+    email
+    first_name
+    last_name
+    phone_number
+    address
+    birthday
+  }
+}
+
 query nicole_parent {
   parents(email: "nicole@nicole.com") {
     email
-		first_name
+    first_name
     last_name
     phone_number
     address
@@ -172,7 +135,7 @@ query nicole_parent {
 query nicole_grandparents {
   grandparents(email: "nicole@nicole.com") {
     email
-  	first_name
+    first_name
     last_name
     phone_number
     address
@@ -181,9 +144,9 @@ query nicole_grandparents {
 }
 
 query nicole_siblings {
-  siblings (email: "nicole@nicole.com") {
+  siblings(email: "nicole@nicole.com") {
     email
-  	first_name
+    first_name
     last_name
     phone_number
     address
@@ -192,9 +155,9 @@ query nicole_siblings {
 }
 
 query daren_children {
-  children (email: "daren@daren.com") {
+  children(email: "daren@daren.com") {
     email
-  	first_name
+    first_name
     last_name
     phone_number
     address
