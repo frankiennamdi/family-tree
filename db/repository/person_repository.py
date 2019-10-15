@@ -52,10 +52,10 @@ class PersonRepository:
     def _merge_relationship(self, relationship_type, from_person, to_person):
         relationship = Relationship.type(relationship_type.name)
         tx = self._graph.begin()
-        from_node = Node(Person.__primarylabel__, **from_person.as_dict())
-        to_node = Node(Person.__primarylabel__, **to_person.as_dict())
+        from_node = Node(Person.label(), **from_person.as_dict())
+        to_node = Node(Person.label(), **to_person.as_dict())
         new_relationship = relationship(from_node, to_node)
-        tx.merge(new_relationship, Person.__primarylabel__, Person.__primarykey__)
+        tx.merge(new_relationship, Person.label(), Person.key())
         tx.push(new_relationship)
         tx.commit()
 
@@ -129,8 +129,8 @@ class PersonRepository:
         for key, value in person_input_dict.items():
             property_dict[key] = value
         tx = self._graph.begin()
-        node = Node(Person.__primarylabel__, **property_dict)
-        tx.merge(node, Person.__primarylabel__, Person.__primarykey__)
+        node = Node(Person.label(), **property_dict)
+        tx.merge(node, Person.label(), Person.key())
         tx.push(node)
         tx.commit()
         return self.find(property_dict['email'])

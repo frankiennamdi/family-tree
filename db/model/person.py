@@ -36,6 +36,14 @@ class Person(GraphObject):
             'birthday': datetime.date.fromisoformat(str(self.birthday)),
         }
 
+    @classmethod
+    def label(cls):
+        return cls.__primarylabel__
+
+    @classmethod
+    def key(cls):
+        return cls.__primarykey__
+
     @staticmethod
     def sort_list_as_dict(persons):
         person_dicts = [person.as_dict() for person in persons]
