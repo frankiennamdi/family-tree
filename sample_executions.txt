@@ -40,23 +40,12 @@ mutation create_drake {
   }
 }
 
-mutation daren_marries_mercy {
-  add_relationship(from_email: "daren@daren.com", to_email: "mercy@mercy.com", relationship_type: MARRIED) {
-    success
-  }
-}
-
 mutation daren_marries_nicole {
   add_relationship(from_email: "daren@daren.com", to_email: "nicole@nicole.com", relationship_type: MARRIED) {
     success
   }
 }
 
-mutation nicole_marries_drew {
-  add_relationship(from_email: "drew@drew.com", to_email: "nicole@nicole.com", relationship_type: MARRIED) {
-    success
-  }
-}
 
 mutation nicole_marries_daren {
   add_relationship(from_email: "nicole@nicole.com", to_email: "daren@daren.com", relationship_type: MARRIED) {
@@ -66,24 +55,6 @@ mutation nicole_marries_daren {
 
 mutation daren_parent_drake {
   add_relationship(from_email: "daren@daren.com", to_email: "drake@drake.com", relationship_type: PARENT) {
-    success
-  }
-}
-
-mutation marcus_parent_drew {
-  add_relationship(from_email: "drew@drew.com", to_email: "marcus@marcus.com", relationship_type: PARENT) {
-    success
-  }
-}
-
-mutation daren_parent_tosh {
-  add_relationship(from_email: "daren@daren.com", to_email: "tosh@tosh.com", relationship_type: PARENT) {
-    success
-  }
-}
-
-mutation nicole_parent_drake {
-  add_relationship(from_email: "nicole@nicole.com", to_email: "drake@drake.com", relationship_type: PARENT) {
     success
   }
 }
