@@ -112,7 +112,7 @@ class TestPersonRepository:
 
     @pytest.mark.run_migration
     def test_create_person_fails_when_data_is_missing(self, person_repository):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as info:
             person_repository.update_or_create(
                 {'email': 'frankie@frankie.com',
                  'first_name': 'Frankie Jonny',
@@ -121,6 +121,7 @@ class TestPersonRepository:
                  'birthday': '2019-10-12'
                  }
             )
+            assert 'new person requires all properties' in str(info.value)
 
     @pytest.mark.run_migration
     @pytest.mark.parametrize("email,first_name",
