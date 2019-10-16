@@ -147,6 +147,8 @@ queries and mutations. The interface also allows you to store command by name. M
 examples are present in the file **sample_executions.txt**. The file contains both valid and invalid
 queries to test the rules of our system. 
 
+![ui](ui.png)
+
 Sample Mutation(create):
  ```
     mutation create_daren {
