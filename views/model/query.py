@@ -1,4 +1,5 @@
 import graphene
+from graphql import GraphQLError
 
 from db.model.person import Person
 from db.repository.person_repository import PersonRepository
@@ -16,28 +17,40 @@ class Query(graphene.ObjectType):
 
     def resolve_person(self, info, email):
         repository = PersonRepository(info.context.graph_db)
-        person = repository.find(email)
+        person = check_email(repository, email)
         return PersonSchema(**person.as_dict())
 
     def resolve_parents(self, info, email):
         repository = PersonRepository(info.context.graph_db)
+        check_email(repository, email)
         return list_to_schema(repository.find_parents(email))
 
     def resolve_grandparents(self, info, email):
         repository = PersonRepository(info.context.graph_db)
+        check_email(repository, email)
         return list_to_schema(repository.find_grandparents(email))
 
     def resolve_siblings(self, info, email):
         repository = PersonRepository(info.context.graph_db)
+        check_email(repository, email)
         return list_to_schema(repository.find_siblings(email))
 
     def resolve_cousins(self, info, email):
         repository = PersonRepository(info.context.graph_db)
+        check_email(repository, email)
         return list_to_schema(repository.find_cousins(email))
 
     def resolve_children(self, info, email):
         repository = PersonRepository(info.context.graph_db)
+        check_email(repository, email)
         return list_to_schema(repository.find_children(email))
+
+
+def check_email(repository, email):
+    person = repository.find(email)
+    if person is None:
+        raise GraphQLError("No person with email {}".format(email))
+    return person
 
 
 def list_to_schema(persons):
