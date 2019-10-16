@@ -29,12 +29,25 @@ Most required commands has been wrapped and included in the **build.sh** file
     ```
 
 2. **Prepare your environment** 
-    
-    If you have a recent version of pip installed. So you may have to downgrade
+  
+    If you have a recent version of pip installed. So you may have to downgrade. If you get the following error you can resolve it using the following
+    command:
 
     ```bash
     ./build.sh py37setup
     ```
+
+    Error from higher version of pip:
+    ```
+      env/utils.py", line 402, in resolve_deps
+        req_dir=req_dir
+        File "/usr/local/lib/python3.7/site-packages/pipenv/utils.py", line 250, in actually_resolve_deps
+          req = Requirement.from_line(dep)
+        File "/usr/local/lib/python3.7/site-packages/pipenv/vendor/requirementslib/models/requirements.py", line 704, in from_line
+          line, extras = _strip_extras(line)
+      TypeError: 'module' object is not callable
+    ``` 
+    
 
 3. **Start Neo4j container**
 
