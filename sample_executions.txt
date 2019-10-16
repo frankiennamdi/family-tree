@@ -124,14 +124,3 @@ query nicole_siblings {
     birthday
   }
 }
-
-query daren_children {
-  children(email: "daren@daren.com") {
-    email
-    first_name
-    last_name
-    phone_number
-    address
-    birthday
-  }
-}
